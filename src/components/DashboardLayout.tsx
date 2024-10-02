@@ -1,6 +1,17 @@
+"use client"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({ children }) {
+	const router = useRouter();
+
+	let isAuthenticated = false; 
+
+	if(localStorage.getItem('token'))
+		isAuthenticated = true;
+
+	if (!isAuthenticated) 
+	    router.push('/login')
 	
 	return (
 		<div className="min-h-screen bg-gray-100">

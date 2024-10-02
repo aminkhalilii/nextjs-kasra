@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 interface LoginFormState {
 	username: string;
@@ -10,6 +11,7 @@ interface LoginFormState {
 }
 
 const LoginComponent: React.FC = () => {
+	const router = useRouter();
 	const [formData, setFormData] = useState<LoginFormState>({
 		username: "",
 		password: "",
@@ -23,10 +25,29 @@ const LoginComponent: React.FC = () => {
 		}));
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		console.log("Username:", formData.username);
 		console.log("Password:", formData.password);
+		const response = await fetch("/api/login", {
+			method: "POST",
+			headers: {
+			  "Content-Type": "application/json",
+			},
+			body: JSON.stringify(formData),
+		  });
+	  
+		  const data = await response.json();
+	  
+		  if (!response.ok) {
+			console.log(data.error);
+			
+		  } else {
+			localStorage.setItem("token", data.token);
+			alert("User login successfully!");
+			router.push("/");
+
+		  }
 	};
 
 	return (
